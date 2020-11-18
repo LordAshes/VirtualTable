@@ -1,13 +1,17 @@
 # VirtualTable
 Implements a Virtual Table for multiples users to interact with objects on the table via the internet.
 
-#Installation Notes:
+-------------------
+Installation Notes:
+-------------------
 
 Ruby On Rails generates a huge number of files for each project but the majority of these files remain unchanged (e.g. are used to run the server, interpret Ruby, etc). As such these "base files" are provided here in two ZIP files (VirtualTable_RubyOnRails_BaseFiles.Zip and VirtualTable_RubyOnRails_BaseFiles.Z01) since they are unlikley to change. Only the "app", "db" and "public" folders are provided individually since the contents of these folders contain the source code and resources that make up the application (i.e. are likely to change).
 
 As such to use this source code, first unzip the base files and then add in the "apps", "db" and "public" folders from this repository.
 
-#Virtual Table Usage:
+--------------------
+Virtual Table Usage:
+--------------------
 
 To Create A New Session:
 
