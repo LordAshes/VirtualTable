@@ -1,0 +1,19 @@
+#AddTokenBar
+{
+  Visibility: hidden;
+}
+
+#GameTitle
+{
+  font-size: 12pt;
+}
+
+#GameModule
+{
+  font-size: 8pt;
+}
+
+.GameBarMenuItem
+{
+  font-size: 8pt;
+}
