@@ -1,0 +1,41 @@
+<H1>Game Sessions:</H1>
+<!-- Enumerate available game sessions with options to join or delete !-->
+<TABLE Border=2>
+<TH>&nbsp;&nbsp;&nbsp;Session Name&nbsp;&nbsp;&nbsp;<TH>&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;&nbsp;<TH Colspan=2>&nbsp;&nbsp;&nbsp;Options&nbsp;&nbsp;&nbsp;<TR>
+<% @games.each do |game| %>
+  <TD>&nbsp;&nbsp;&nbsp;<%= game.title %>&nbsp;&nbsp;&nbsp;
+  <TD>&nbsp;&nbsp;&nbsp;<%= game.module %>&nbsp;&nbsp;&nbsp;
+  <TD><button onClick="document.location.href='/games/<%= game.id %>';">Join Session</button>
+  <TD><%= button_to 'Delete', game_path(game), method: :delete, data: { confirm: 'Are you sure?' } %>
+  <TR>
+<% end %>
+<!-- Provide option to create new game session !-->
+  <TD Colspan=4><Center><BR><%= link_to 'Create New Session', new_game_path %></Center>&nbsp;&nbsp;&nbsp;
+</TABLE>
+<DIV Id=Instructions style="Position: Absolute; Left: 500px; Top: 80px; Width: 600px; Height: 600px; Border: 1px solid black;">
+  <TABLE>
+  <TH Width=600 style="background-color: #999999;"><H3>Instructions:</H3>
+  <TR>
+  <TD>
+  <BR>Virtual Table uses a click and click operation method as opposed to a drag and drop operation method.<BR>
+  <BR>
+  <B>To Move Tokens:</B><BR>
+  <BR>
+  Left click on the token to be moved. Do NOT drag. Click where you would like to move the token to. The token will move (jump) to the selected location.<BR>
+  <BR>
+  <B>To Select Multiple Tokens:</B><BR>
+  <BR>
+  Left click on the background or any locked token to start the area selection. Do NOT drag. Move mouse and area selection will adjust.
+  Left click when the selection area encloses all of the desired tokens. Tokens are included in the selection area if their top-left corner is in the selection area.
+  Tokens will turn semi transparent to indicated that they are in the current group selection. Single token or area selection cannot be performed until a group operation
+  is selected from the right click context menu. Right click anywhere to bring up the group context menu. Use the cancel option from the menu if no operation is desired.<BR>
+  <BR>
+  <B>Context Menus:</B><BR>
+  <BR>
+  There are three different context menus: token, background and group. If you right click on a unlocked token, you will get the token context menu used to perform actions
+  on the single, selected token. If you right click on the background or a locked token, you will get the background context menu. This menu is used to perform general
+  operations which can involve a token (such as unlock) or involve no tokens. If the area selection was used, neither of these context menus are availabe. Instead the
+  group context menu will be displayed. This context menu is used to perform an action on all selected tokens.
+  </TR>
+  </TABLE>
+</DIV>

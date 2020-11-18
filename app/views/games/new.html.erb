@@ -1,0 +1,27 @@
+<H1>Create New Game Session</H1>
+<%= form_with scope: :game, url: games_path, local: true do |form| %>
+  <TABLE Border=2>
+    <TD>
+    Give your session a name:
+	<TD>
+    <%= form.text_field :title %>
+    <TR>
+	<TD>
+	Select the game setup:
+	<TD>
+	<Center>
+    <select name=game[module]>
+	  <!-- Generate the modules list based on all of the files ending in .module.cfg and !-->
+      <% Dir.entries(File.dirname(__FILE__).to_s+"/../../../public").each do |entry| %>
+	    <% if(entry.downcase.include? ".module.cfg") %>
+		  <option value=<%= entry[0..entry.length-".module.cfg".length-1] %>><%= entry[0..entry.length-".module.cfg".length-1] %></option>
+	    <% end %>
+	  <% end %>
+    </select> 
+	</Center>
+	<TR>
+	<TD Colspan=2>
+      <Center><%= form.submit "Create Session" %></Center>
+	<TR>
+  </TABLE>
+<% end %>

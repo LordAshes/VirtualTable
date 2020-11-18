@@ -1,0 +1,8 @@
+<!-- Enumerate all tokens (or tokens updated after the specified DateTime) in pipe delimited format used by AJAX function to update the display !-->
+<% @tokens.each do |token| %>
+  <% unless(token.id.to_s.empty?) %>
+|<%= token.id %>|<%= token.title %>|<%= token.x %>|<%= token.y %>|<%= token.z %>|<%= token.rotation %>|<%= token.state %>|<%= token.states %>|<%= token.location %>|<%= token.locked %>|<%= token.updated_at %>|
+  <% end %>
+<% end %>
+Feedback: <%= @feedback %>
+
