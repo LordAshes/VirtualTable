@@ -1,5 +1,8 @@
 # VirtualTable
-Implements a Virtual Table for multiples users to interact with objects on the table via the internet.
+Ruby On Rails implemention of a Virtual Table for multiples users to interact with objects on the table via the internet.
+Ideal for playing board games, card games, dice games and even RPG games.
+
+Just like sitting around a real table, Virtual Table does not implement any specific game rules (although the base code could be exapnded to do so), it just offers the user a way to interact with objects, using a number of different actions, over the internet.  
 
 -------------------
 Installation Notes:
