@@ -1,0 +1,173 @@
+-----------------
+- Virtual Table -
+-----------------
+
+1.0 Introduction
+
+Virtual Table is a multi user internet based environment where multiple users can connect up to a common set of objects in the environment and manipulate them. Virtual Table supports the creation of modules which dictate, when a session is created, what obejcts will be created for the users to interact with. Ideal for implementing the playting of board games, card games, dice games and roleplaying games over the internet.
+
+Like sitting around a real physical table, Virtual Table does not implement any specific game rules. It just provides the objects (referred to as tokens) and a number of different actions that can be performed on them in order to manipulate them. However, since Virtual Table is open source it is possible to expand it to include game specific rules.
+
+Here are some of the supported functions that Virtual Table offers:
+
+- Move objects
+- Change object states (more on that later) such as flipping a coin, turning over a card, rolling a die, etc.
+- Rotate objects
+- Arrange group of objects such as fanning out a deck of cards, stacking objects on a pile, etc.
+- Shuffling group of objects such as a deck of cards
+- Cutting a group of objects such as a deck of cards
+- Putting objects into your hand (such as a card) so others can't see its true state
+- Putting objects back on the table (such as a card) so others can see its true state
+- Group selection
+- Locked and unlocked object
+- Token, background and group module specific context menus 
+- Optional Zoom view of objects
+- Darkness / Hidden Areas functionality with obstacles implementation
+
+2.0 A Matter Of State
+
+The key concept behind Virtual Tables is states. Each object (referred to as tokens here after) that the users can interact with has one or more states. States are basically a list of images that the token can switch between. The states available to the token are defined by the creator of the module but generally a poker chip or a chess pieces may have only one state since it can be moved but does not really change its apperance or meaning. A coin or card might have two states (heads/tails or faceup/facedown). A regular six sided die would probably have six states (one for each side). A hero token could have only one state but it could also have more to represent things like wounds, death or other game conditions.
+
+Each token starts off in one of these states (as dictated by the module) and the token's state can change through the use of the provided actions. For example, the roll action changes a token to a random state and thus can be used on tokens implementing a die to roll the die. A card can use the cycle action to cycle between its availabel states thus turning the card either face down or face up.
+
+For more details on what actions are available, see the Module Construction document.
+
+3.0 Basic Object Movement
+
+Virtual Table uses a click-click implementation to moving tokens as opposed to a drag and drop implementation. To following steps are used to move an token:
+
+1. Left click on the desired token
+2. The token will get a faded red background and a red border. It should be noted that depending on the token state image, the faded red background may not be visible.
+3. Move the mouse - without dragging (i.e. without holding the mouse down) - to the desired destination.
+4. Left click at the desired destination to "teleport" the token to the desired destination.
+5. The move is recorded in the chat.
+
+To move a group of tokens at the same time, see the Group Actions section.
+
+4.0 Basic Object Actions (Single Token Context Menu)
+
+To perform actions other than movement on a token, the following steps can be used:
+
+1. Right click the desired token
+2. The token will get a faded red background and a red border. It should be noted that depending on the token state image, the faded red background may not be visible.
+3. The single token context menu will appear
+4. Select an option from the context menu. The Cancel option (if implemented by the module) can be used to not perform any action.
+5. The selected action is performed and recorded in the chat.
+
+5.0 Backrgound Actions (Background Context Menu)
+
+To perform background actions (if the module supports any), teh following steps can be used:
+
+1. Right click any area which is not a unlocked token (i.e. the background or a locked token)
+2. The background context menu will appear
+3. Select an option from the context menu. The Cancel option (if implemented by the module) can be used to not perform any action.
+4. The selected action is performed and recorded in the chat.
+
+Background actions are typically actions which do not involve any specific tokens. However, insome cases, most commonly with the unlock option, they are token specific. Keep in mind, if making a custon module, that the lock action is a token specific action and thus should be in the single token context menu. However, the unlock action has to be in the background context menu because a locked object cannot be selected to bring up the single token context menu.
+
+5.0 Group Actions (Group Context Menu)
+
+There are two parts to using group actions: make group selection and choose action.
+
+To make a group selection, use the following steps:
+
+1. Left click on the background or a locked token in the top left corner of the desired selection area. This will start the area selection window.
+2. Move the mouse - without dragging (i.e. without holding the mouse down) - to the bottom right of the desired selection area.
+3. Left click to end the selection process.
+4. All tokens whose top right corner is inside the selection area will be selected. The tokens change to slightly transparent to indicate that they are selected.
+5. At this point, single token cotext menu and well as the area selection functionality will not be available until a group action is chosen (see below).
+6. Right click to bring up the group context menu. It should be noted that for some actions like offset, stack and fan, the location of the right click is important.
+7. Select the desired group action. The Cancel option (if implemented by the module) can be used to not perform any action and cancel the group selection.
+8. The selected action is applied to all selected tokens and recorded in the chat.
+
+6.0 Ownership
+
+Virtual Table supports the concept of token ownership. Starting ownership is defined by the specific modules but most tokens start off with ownership by the Table. This means no user has ownership of the token and it can be freely used by any player. Assuming the module supports it, players can take ownership of tokens. When a player takes ownership of a token, the following occurs:
+
+1. The token gains a drop shadow indicating that it is owned. The drop shaow is in the player's color if the player owns the token or in black if another player owns the token.
+2. The token tooltop is changed to indicate the player that owns the token.
+3. The owner of the token sees the true state of the token.
+4. Players who do not own the token see the token's first state.
+5. This effect lasts until the player removes ownership of the token.
+
+To make use of ownership in custom modules, state 1 of tokens should be the state that other players see when the token is owned. State 2 or others should be the state that the owner sees.
+
+It should be noted that currently ownership does NOT prevent others from moving or acting on the token. It is a purely informative and visual feature.   
+
+7.0 Lock State
+
+Tokens in Virtual Table can be locked or unlocked. Unlocked tokens can be moved and can be selected for single token or group actions. Locked objects cannot be single token selected or group selected. Limited token actions (typically unlock) can be provided for a locked token through the background context menu.
+
+Normally objects which are expected to be interacted with (such as pawns, cards, dice, etc) are set to the unlocked by the module and objects which should remain static (like a game board or background) are set to locked by the module to avoid accidentaly moving the board from underneath the pieces on it.
+
+8.0 Zoom Token View
+
+If the module supports it, by holding ALT and mousing over a token, a larger view of the token can be seen. This is common to all modules but only works on tokens for which the module creator has provided a zoom view image. It should be noted that the token image and the zoom image do not necessarily need to be just an enlarged version of each other. For example, a hero token could use a top down image for the actual token but use a nice portrait image in the zoom view.
+
+9.0 Lighting
+
+Lighting is typically used only for Roleplaying Game modules but creative module designers may find other uses for it (such has player hands without using token ownership).
+
+Lighting in Virtual Table is not true dynamic lighting where obstacles will block light/view behind them depending where the token is. Instead Virtual Table implements lighting based on areas. A module that uses darkness can define a number of areas and while a token is in an area it can see everything in that area up to its vision limit (if one is set) but not into any other area. For example, if a module displays a house and each of the rooms is defined as a separate location then a token outside the house will see everything (even behind the house if the vision limit is set large enough) but not into the house. If the token is moved into one of the house rooms, the token will be able to see anything in that room (if not vsion limit is large enough) but nothing beyond it (including other house rooms or the outside).
+
+It should also be noted that lighting is not a Fog of War feature. Once a token with lighting moves the area no longer illuminated will becomes dark again unlike typical Fog of War features in which the revealed areas remain revealed. 
+
+There are two parts that make up lighting: light limits and Obstacles. These parts can be used together or either can be used individually.
+
+9.1 Light Limits
+
+Each token can set light limits and light type. This consists of 3 settings: bright, dim and eyes. The bright settings indicates how far the token can see in darkness clearly. The dim setting (always equal to or larger than the bright setting) indicates how much further the token can see beyond the bright range in dim light. The eyes setting indicates if this light is global or personal. If the eyes setting is global it means other players will also get the benfit of the light. This is typically used for lights made by torches, lanters, fires, etc. If the eyes setting is other than global, only the owner of the token will see the light benefits. This is typically used for effects like dark vision or vision via magic.
+
+The range that a token can see is determined by these light settings but can be further restricted by the definition of obstances (if used).
+
+This vision feature only applies if the module has Darkness turned on. If the Darkness feature is turned off then there is no darkness and all players can see all contents of the Virtual Table. 
+
+9.2 Obstacles 
+
+Without the definition of any obstacles, if Darkness is turned on then each token will see up to its light limit. This means, for example, if a hero token is moved up to the wall of a building the token would still show up to the light limits for the token in all direction including contents behind the wall. This is typically not desired and for this reason there is the possibility of defining obstacles. Obstacles are areas whose borders stop the light revealing effect. Going back to the hero token near the building wall example, if the building outer wall was defined as an obstacle area then if the token was on the outside of the building the light revealing effect would reveal up to the token's limit but not pass through the wall. If the token was then moved into the house, the contents of the house would be revealed up to the token's light limits but would not pass to the outside.
+
+It should be noted that this obstacle functionality is not true dynamic lighting and thus has no effect on the token's line of sight. For example, the module could define an obstacle area which defines an L-shaped room. Even if the token was at one end of the L-shaped room (and thus not have line of sight on the other end of the room) the whole room will be revealed (up to the token's light limits) because the token is in that "area". Similarly a token standing outside a house which is defined as a obstacle area would see contents behind the house even though the token does not have line of sight of that area.
+
+9.3 Practical Applications
+
+The use of either or both of these lighting functions can create different effects in the module. Here we discuss a few possible options.
+
+Using light limits without obstacles is ideal for roleplaying modules which take place in the open (e.g. a road or field) at night. In such a case, there is no need to define any obstacles and the vision of each token will be limited to the global visions of the tokens and/or any personal light limits of ant tokens which the player owns. For example, if the player tokens are all carying lanterns then the area around each token will be revealed up to the lantern's light limits.
+
+Using obstacles without lighting limits is achieved by setting the lighting limits for tokens to values greater than the play area. This means they they reveal anything in the area that they are in but obstacles still block the lighting reveal feature. This is ideal for roleplaying scenarios with buildings rooms or dungeons chambers that need to be revealed one at a time but that have their own light source. In this case, everything in the token's area is revealed but the reveal effect does not cross obstacle borders into other rooms or chambers until the token moves there.
+
+This effect can also be used in non-roleplaying modules to implement a variation of player's hand. Virtual Table has actions to take and drop tokens. When a player takes a token, the token is highlighted to indicate that it is taken (in the player's color if the player owns it or in black if another player owns it) and all other player's see the state 1 of the token while the owner sees the true state. For example, a card token would implement the car back as the first state and the face up state as the second state so that when it is owned by a player all other players see the face down view of the card while only the owner sees the face up view. This still allows others to see the token but not see its true state. This function can be supplemented by creating obstacle areas in which players can place their owned tokens. They still have to own the tokens but in that case when they put them into one of the obstacle areas the other players (not having any of their own tokens or common table tokens in the area) would not see the contents. This allows players to hide owned tokens.
+
+The use of both light limits and obstacles is typically used in roleplaying modules where that includes building rooms or dungeon chambers that need to be revealed one at a time and that don't have their own light sources. In such a case the token's will reveal light up t their light limits or up to obstacles (which ever comes first).
+
+10. Supported Actions
+
+Single token or background actions are initiated by the client, sent to the server for processing, and updates from the server cause changes on the client side. However, the server expects to get requests for singel tokens and thus group actions are first processed by the client and broken down into individual requets which are sent to the server. In some cases, the client side modifies the data goint to the server, for each token, to implement the desired action. For example, the fan action requires each token's position to be different. The client side recognizes a fan request and ensures that the requests goint to the server to update the position of each token are appropriately modified to produce the fan effect. This means that certain actions are only available as group actions.  
+
+The following is a list of actions which are supported by Virtual Table. It should be noted that Virtual Table uses the specified action names for each of these actions but the context menus, which are defined by the module creator, may present them in the context menu using a different name. This is very common to make the menu selections more appropriate to the specific module. For example, the cycle action cycles through a token's states. In the case of a two state card token, for example, this would switch between a face down and face up view of the card and vice versa. However, the module may present this action, in the context menu, as 'Flip' instead of cycle because the word 'Flip' makes more sense to a player than the action cycle.
+
+edit: Used to change the x, y and/or z (in front or in behind) position of the a token or to change lighting properties.
+first: Set token's state to the first state
+prev: Set token's state to the previous state (if there is one or no action if there isn't one)
+state: Set token's state to the specified state
+roll: Set token's state to a random state
+cycle: Set token's state to the next state. If there is no next state, set the token's state to the first state.
+next: Set token's state to the next state (if there is one or no action if there isn't one)
+last: Set token's state to the last state
+take: Take ownership of the token
+drop: Remove ownership of the token
+rotate: Rotate the token by the specified amount
+lock: Lock the token
+unlock: Unlock the token
+back: Send a token to the back (into the screen)
+front: Send a token to the front (closes to the user)
+reorder: Houskeeping action used to correct the order of tokens (typically needed after actions that change the z-order such a back and front)
+
+In addition the following actions are availble to group context menus only:
+
+offset: Moves a group of tokens to the specified location keeping the spacing between tokens same. Basically moves an area of tokens as they are. The most front token is use to determine the amount that all tokens move.
+stack: Moves a group of tokens to the same specified location on top of each other. The z-order (which tokens were on top of which) is preserved. Typically used to stack objects on a pile or deck.
+fan: Moves a group of tokens to the specified location and then shifts each successive token by the specified amount horizontally. Results in a bunch of tokens beside each other (possibly overlapping) like a hand of cards.
+cascale: Moves a group of tokens to the specified location and then shifts each successive token by the specified amount horizontally and in the negative vertial direction (towards the top of the screen). Results in a bunch of tokens in a diagonal line (possibly overlapping).
+shuffle: Assigns random z-order values to all tokens in the group. This has the effect of shuffling the order of the tokens (such as shuffling a deck of cards). The "1x:reorder" action should be used afterwards. See the Moduel Creation document for more details.
+cut: Moves a number of top most tokens to the back. This has the effect of cutting a deck of cards. The "1x:reorder" action should be used afterwards. See the Moduel Creation document for more details.
