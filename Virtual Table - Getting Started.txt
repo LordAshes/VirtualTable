@@ -1,0 +1,52 @@
+-----------------
+- Virtual Table -
+-----------------
+
+In order to use Virtual Table you need to create a new session with a sepecific module (unless you have already done so or are using one of the pre-generated sessions).
+
+Creating a session is the equivalent of grabbing a room in the physical world. Choosing a module during session creation is equivalent to selecting the game that you want to play and laying out the pieces.
+
+Each session has its own copy of the selected module game pieces and thus multiple games, even of the same module, can be going on at the same time without affecting each other.  
+
+This information assumes that Virtual Table has been installed and the Ruby on Rails server started. Doing this is beyond the scope of this document.
+
+1.0 Creating A Session
+
+Using a modern web browser, enter the following URL into the addres bar:
+
+http://127.0.0.1:3000/games
+
+Where 127.0.0.1 and 3000 are the IP address (or host name) and port of the Ruby on Rails server that is hosting Virtual Table.
+
+This will display a list of currently available sessions and provide a link to create a new session. Click the provided link to create a new session.
+
+This will bring up a page requesting a session title and the selection of a module.
+
+The session title is what will appear on the games list of session and is a way for users to identify which session is which if they are returning back to a previous session. As such, if it is possible that the same module may be involved in more than one game at a time, it is a good idea to identify the session with something other than the module being used. For example,  a session called "Monopoly" is not too informative if Virtual Table is used to start more than one momoploly game at once.
+
+The module selection determines what tokens will be available in the Virtual Table session. The available modules are detected automatically based on presence of key module files in the Virtual Table folders. If custom modules are made, all that is needed is for the two module files and support assets (token images) to be added to the Public folder and the module will automatically get detected the next time a new session is made.
+
+Once a session title and module are selected, press the create session button. This creates the session and returns the user back to the session list.
+
+2.0 Joining A Session
+
+Using a modern web browser, enter the following URL into the addres bar:
+
+http://127.0.0.1:3000/games
+
+Where 127.0.0.1 and 3000 are the IP address (or host name) and port of the Ruby on Rails server that is hosting Virtual Table.
+
+This will display a list of currently available sessions and provide a link to create a new session. Click the join session button corresponding to the session that is to be joined.
+
+Currently Virtual Table does not provide any session authentication in order to join the session and thus the user will be taken to the Virtual Table session and display its current state.
+
+Once a player has joined the session, he/she can manipulate any of the displayed tokens as described in the User Manual. It should be noted that the function available are determined by the module and thus not all of the functions described in the User Manual may be available in all modules.
+
+However, before starting to interact it is recommended to update the session name and color. By default this starts out as Bob and green. This information needs to be updated in order to use the take and drop options (ownership actions) if they are used in the module. It should also be noted that players should avoid choing black as their player color. When a token is owned by another player it is displayed with a black drop shadow. When a token is owned by the user, it is displayed with a drop shadow matching the player color. This makes it easy to distinguish which tokens are owned by the user and which are owned by other players unless the player chooses the black player color because in that case all owned tokens show up with a black drop shadow. In either case the token tool tip does indicate the owner of the token (or Table if it is unowned).
+
+3.0 Ending A Session
+
+If a game is in progress but needs to be interrupted (i.e. will be continued at some later time) there is no actions to take. Each time an token is manipulated (moves or an action is performed on it) the latest sate is always recorded and thus there is no need to "save the game". Players can simply close their browsers and the session state will be preserved.
+
+If a game has been completed (or players are not going to return to it) then the session should be deleted to free up space on the server. In order to do this, from the session, click the Main Menu option or list the game session using the URL indicated above. Locate the session (using the session title) and use the delete button to delete the session. A confirmation dialog will confirm the request. If the request is confirmed the session is deleted along with all information related to the session. All other sessions (including sessions of the same module type) will be unaffected. There is no undo for this process so ensure that a session will not be used anymore before deleting it.
+    
