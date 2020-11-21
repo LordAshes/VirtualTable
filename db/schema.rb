@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_16_235358) do
+ActiveRecord::Schema.define(version: 2020_11_20_163621) do
 
   create_table "games", force: :cascade do |t|
     t.string "title"
@@ -20,13 +20,16 @@ ActiveRecord::Schema.define(version: 2020_11_16_235358) do
   end
 
   create_table "tokens", force: :cascade do |t|
-    t.string "title"
+    t.text "title"
     t.integer "x"
     t.integer "y"
     t.integer "z"
     t.integer "rotation"
     t.text "state"
     t.text "states"
+    t.integer "bright"
+    t.integer "dim"
+    t.text "eyes"
     t.text "location"
     t.text "locked"
     t.integer "game_id", null: false
