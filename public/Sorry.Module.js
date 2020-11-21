@@ -5,7 +5,7 @@
 // different values to be sent to the REST API for each token. For example, the offset, fan, cascade and shuffle actions all have different
 // property values for each token. The applyClientSideMenuActionTransforms() function does this before each token is sent to the RESTful
 // server for the specified action.
-var contextMenuOptionsForToken =
+contextMenuOptionsForToken =
 {
   "Roll": "roll",
   "-1": "",
@@ -19,23 +19,26 @@ var contextMenuOptionsForToken =
   "Cancel": ""
 };
 
-var contextMenuOptionsForBackground =
+contextMenuOptionsForBackground =
 {
   "Unlock": "unlock",
   "-1": "",
   "Cancel": "",
 };
 
-var contextMenuOptionsForGroup =
+contextMenuOptionsForGroup =
 {
   "Cancel": "",
 };
 
 // Module Settings
-var settings =
+settings =
 {
-  "Width": 800,
-  "Height": 700,
-  "Color": "#007700"
+  "Width": 810,
+  "Height": 810,
+  "Color": "#00AA00",
+  "Chat": {"x": 830, "y": 40},
+  "Darkness": false,
+  "DiagnosticMode": ""
 }
 
