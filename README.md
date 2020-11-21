@@ -12,6 +12,13 @@ Ruby On Rails generates a huge number of files for each project but the majority
 
 As such to use this source code, first unzip the base files and then add in the "apps", "db" and "public" folders from this repository.
 
+---------------
+Revision Notes:
+---------------
+
+* Added token zoom functionality and lighting functionality
+* Initial Commit
+
 --------------------
 Virtual Table Usage:
 --------------------
