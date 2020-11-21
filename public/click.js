@@ -20,6 +20,14 @@
 	if(typeof(game_id)==="undefined") { alert("Missing global game_id variable setup!"); }
     // Add a handler for right clicks (context menu)
     document.addEventListener( 'contextmenu', function(e) { 'use strict'; showMenu(e); e.preventDefault(); } );
+	
+	var zoom = document.createElement("IMG");
+	zoom.id = "Zoom";
+	zoom.src = "";
+	zoom.style.position = "absolute";
+	zoom.style.pointerEvents = "none";
+	zoom.style.visibility = "hidden";
+	document.body.appendChild(zoom);
   }
   
   // Handler for left clicks (grab/drop)
@@ -79,7 +87,7 @@
 	  // Clear holding data 
 	  holding = "";
 	}
-	// Prevent tokens below from triggering
+	// Stop event propagation to only select the top token
 	event.stopPropagation();
   }
   
@@ -217,7 +225,7 @@
 	// Make AJAX request to the corresponding REST API
 	var token_id = -1;
 	var token = null;
-	var specs = {"action": action, "x": x, "y": y, "z": 0, "token": null };
+	var specs = {"count": selected.length, "action": action, "x": x, "y": y, "z": 0, "token": null };
     selected.forEach(function(el)	   
 	{	  
 	  // Process each token
@@ -275,7 +283,7 @@
   }
   
   // Function for updating the selection area as the mouse is moved during a drag operation. While the actions is called drag it is actually and click and move operation.
-  function dragUpdate()
+  function dragUpdate(el,e)
   {
 	// Take action only if a area selection is in progress
     if(drag)
@@ -284,6 +292,32 @@
 	  var area = document.getElementById("Area");
 	  area.style.width = (event.clientX-parseInt(area.style.left))+"px";
 	  area.style.height = (event.clientY-parseInt(area.style.top))+"px";
+	}
+	else
+	{
+	  if(typeof(e)!="undefined")
+	  {
+		if(e.altKey)
+		{
+			var zoom = document.getElementById("Zoom");
+			if(zoom.style.visibility=="hidden")
+			{
+				var url = document.getElementById(el).src;
+				url = url.substring(0,url.lastIndexOf("."))+".zoom"+url.substring(url.lastIndexOf("."));
+				zoom.src = url;
+				zoom.style.left = e.clientX+"px";
+				zoom.style.top = e.clientY+"px";
+				zoom.style.zIndex = 1000;
+				zoom.style.visibility="visible";
+				zoom.setAttribute("onError","document.getElementById('Zoom').src='/no.zoom.png';");
+			}
+		}
+		else
+		{
+			document.getElementById("Zoom").style.visibility="hidden";
+			document.getElementById("Zoom").src="";
+		}
+	  }
 	}
   }
 

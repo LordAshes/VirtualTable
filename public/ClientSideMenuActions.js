@@ -5,9 +5,29 @@
 function applyClientSideMenuActionTransforms(action,value,specs)
 {
   //
+  // Offset: Adjusts the relative position of the tokens based on the first token and the selected location
+  //
+  if(action=="offset")
+  {
+    // If this is the first token, adjust the x and y starting value one interval in the opposite direction so that when one internal
+	// value is added for each token (including the starting one) the first token will end up at the selected x and y value.
+    if(action==specs["action"])
+	{
+      // Determine the relative offset by which all selected tokens are moved		
+      specs["dx"]=specs["x"]-parseInt(specs["token"].style.left);
+	  specs["dy"]=specs["y"]-parseInt(specs["token"].style.top);
+	}
+	// Call the RESTful "edit" operation.
+	specs["action"] = "edit"; 
+	// Offset the x and y value by the spacing interval value for each token
+	specs["x"]=parseInt(specs["token"].style.left)+specs["dx"];
+ 	specs["y"]=parseInt(specs["token"].style.top)+specs["dy"]; 
+  }
+
+  //
   // Stack: Moves all selected tokens to the selected location.
   //
-  if(action=="stack")
+  else if(action=="stack")
   { 
     // Call the RESTful "edit" operation.
     specs["action"] = "edit";
@@ -49,7 +69,7 @@ function applyClientSideMenuActionTransforms(action,value,specs)
   }
   
   //
-  // Shuffle: Adjusts the z value of each token
+  // Shuffle: Randomly adjusts the z value of each token
   //
   if(action=="shuffle")
   { 
@@ -59,24 +79,24 @@ function applyClientSideMenuActionTransforms(action,value,specs)
 	// readjust all of the token z orders to consecutive values.
 	specs["z"]=Math.floor((Math.random() * 900) + 20);
   }
-  
+
   //
-  // Offset: Adjusts the relative position of the tokens based on the first token and the selected location
+  // Cut: Places a number of bottom tokens on top of the z order
   //
-  else if(action=="offset")
-  {
-    // If this is the first token, adjust the x and y starting value one interval in the opposite direction so that when one internal
-	// value is added for each token (including the starting one) the first token will end up at the selected x and y value.
+  if(action=="cut")
+  { 
     if(action==specs["action"])
 	{ 
-      specs["dx"]=specs["x"]-parseInt(specs["token"].style.left);
-	  specs["dy"]=specs["y"]-parseInt(specs["token"].style.top);
+      // Randomly generate the point at which the token group (e.g. deck) is to be cut
+	  specs["cutIndex"]=Math.floor((Math.random() * specs["count"]-2) + 2);
+	  specs["index"]=1;
+	  alert("Cut at "+specs["cutIndex"]);
 	}
 	// Call the RESTful "edit" operation.
-	specs["action"] = "edit"; 
-	// Offset the x and y value by the spacing interval value for each token
-	specs["x"]=parseInt(specs["token"].style.left)+specs["dx"];
- 	specs["y"]=parseInt(specs["token"].style.top)+specs["dy"]; 
-  }
-  
+    specs["action"] = "edit";
+	// If the token if after the randomly selected cut index, shift the token's z property by 500 (to move the lower portion to the top)
+	if(specs["index"]>specs["cutIndex"]){specs["z"]=parseInt(specs["z"])+500;}
+	alert("Setting Z-Index To "+specs["z"]);
+	specs["index"]++;
+  }  
 }
