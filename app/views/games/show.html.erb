@@ -5,6 +5,15 @@
 
 <SCRIPT Language=Javascript>
   var game_id = <%= @game.id %>;
+  var contextMenuOptionsForToken = {};
+  var contextMenuOptionsForBackground = {};
+  var contextMenuOptionsForGroup = {};
+  var settings = {};
+  var obstacles = [];
+</SCRIPT>
+
+<!-- Load javascript module related configuration !-->
+<SCRIPT Language=Javascript Src='/<%= @game.module %>.module.js'>
 </SCRIPT>
 
 <!-- Load jQuery support framework !-->
@@ -23,8 +32,8 @@
 <SCRIPT Language=Javascript Src='/Chat.js'>
 </SCRIPT>
 
-<!-- Load javascript module related configuration !-->
-<SCRIPT Language=Javascript Src='/<%= @game.module %>.module.js'>
+<!-- Load javascript chat related functionality !-->
+<SCRIPT Language=Javascript Src='/Darkness.js'>
 </SCRIPT>
 
 <SCRIPT Language=Javascript>
@@ -65,10 +74,12 @@
 	  // requests which result in multiple token changes (e.g. reorder) and the periodic update REST API can come back with multiple token changes depending on
 	  // how many tokens were changed since the last update.
 	  tokens = data.split('\n');
+	  var noUpdates = true;
 	  tokens.forEach(function(token)
 	  {
   	    if(token!="")
 	    {
+		  noUpdates = false;
 		  // Parse out the pipe separated data ([1]=id,[2]=element,[3]=x,[4]=y,[5]=z,[6]=rotation,[7]=state,[8]=states,[9]=location,[10]=locked,[11]=UpdatedDateTime) and apply it to the token
 	      var parts = token.split('|');
 		  tk = document.getElementById(parts[2]+"_"+parts[1]);
@@ -78,8 +89,10 @@
 		  tk.style.zIndex = parts[5];
 		  // Update rotation
 		  tk.style.transform = "rotate("+parts[6]+"deg)";
+		  // Update light
+		  tk.setAttribute('Light',parts[10]+","+parts[11]+","+parts[12]);
 		  // Update class name to reflect location and locked status
-	      tk.className = parts[9]+" "+parts[10];
+	      tk.className = parts[9]+" Token "+parts[13];
 		  // Update the token image to state if on the Table or in own hand, and to first state if in other's hand
 		  if(parts[9]==document.getElementById('player').value || parts[9]=="Table")  {  tk.src = "/"+parts[7]+".png"; } else { tk.src = "/"+parts[8].split(',')[0]+".png"; }
 		  // Update card shadow to reflect player color (if in hand), black (if in other's hand) or none if on Table
@@ -96,20 +109,47 @@
   			tk.style.filter="drop-shadow(8px 8px 10px black)";
 		  }
 		  // Store last update DateTime to be passed in on the next update so that only new updates are obtained
-		  from = parts[11];
+		  from = parts[14];
 	    }
 	  });	
+	  if(noUpdates==false)
+	  {
+        if(settings["Darkness"]==true){renderDarkness();}
+	  }
 	}
 	catch(e)
 	{
 	  alert(e);
 	}
   }
+    
+  function renderDarkness()
+  {
+    var dark = document.getElementById("Darkness");
+	dark.style.left = 0;
+	dark.style.top = 0;
+	dark.style.width = document.getElementById("Table_0").style.width;
+	dark.style.height = document.getElementById("Table_0").style.height;
+	dark.width = parseInt(document.getElementById("Table_0").style.width);
+	dark.height = parseInt(document.getElementById("Table_0").style.height);
+	
+    var tokensList = document.getElementsByClassName("Token");
+	var tokens = [];
+	for(token of tokensList)
+	{
+	  var light = (token.getAttribute("Light")+",0,0,none").split(',');
+	  if((token.className.indexOf("Table")>-1) || (token.className.indexOf(document.getElementById("player").value)>-1) || light[2]=="global")
+	  {
+	    tokens.push({"x": parseInt(token.style.left)+(token.width/2), "y": parseInt(token.style.top)+(token.height/2), "r": parseInt(light[0]), "r2": parseInt(light[1]) });
+	  }
+	};
+    makeDarkness(tokens, obstacles, settings["DiagnosticMode"]);
+  }
      
 </SCRIPT>
 
 <!-- Initialize the page on load !-->
-<BODY onLoad="initializeUpdates(); initializeClicks(); initializeChat();">
+<BODY onLoad="initializeUpdates(); initializeClicks(); initializeChat(); initializeDarkness();">
 
 <!-- Display small header infromation leaving majority of the screen for the play area !-->
 <span Id=GameTitle><%= @game.title %></span>
@@ -121,11 +161,12 @@
 <span Id=check Class=GameBarMenuItem></span>
 
 <!-- Create a table object that will hold the tokens and act as a object to click on for token movements !-->
-<DIV Id='Table_0' class='Table Locked' onClick='clickHandler("0","Table");' onMouseMove='dragUpdate();' style="Position: Absolute; Left: 10px; Top: 40px; z-Index: 1;">
+<DIV Id='Table_0' class='Table Locked' onClick='clickHandler("0","Table");' onMouseMove='dragUpdate();' style="Position: Absolute; Left: 10px; Top: 40px; z-Index: 1; oveflow: hidden;">
 <!-- Create session tokens !-->
 <% @game.tokens.each do |token| %>
   <% unless(token.id.to_s.empty?) %>
-    <IMG Id='<%= token.title %>_<%= token.id %>' Class='<%= token.location %> <%= token.locked %>' Src='/<%= token.state %>.png' title='<%= token.location %>' style='Position: Absolute; Left:<%= token.x %>px; Top:<%= token.y %>px; z-index:<%= token.z %>; transform: rotate(<%= token.rotation %>deg)' onClick='clickHandler("<%= token.id %>","<%= token.title %>");' onMouseMove='dragUpdate();' />
+    <IMG Id='<%= token.title %>_<%= token.id %>' Class='<%= token.location %> Token <%= token.locked %>' Light='<%= token.bright %>,<%= token.dim %>,<%= token.eyes %>' Src='/<%= token.state %>.png' title='<%= token.location %>' style='Position: Absolute; Left:<%= token.x %>px; Top:<%= token.y %>px; z-index:<%= token.z %>; transform: rotate(<%= token.rotation %>deg)' onClick='clickHandler("<%= token.id %>","<%= token.title %>");' onMouseMove='dragUpdate("<%= token.title %>_<%= token.id %>",event);' onMouseLeave='document.getElementById("Zoom").style.visibility="hidden";document.getElementById("Zoom").src="";' />
   <% end %>
 <% end %>
+<Canvas Id=Darkness style="position: absolute; left: 0px; top: 0px; width: 1920px; height: 1080px; z-index: 998; opacity: 1.0; visibility: visible; pointer-events:none; background-color: black;" />
 </DIV>

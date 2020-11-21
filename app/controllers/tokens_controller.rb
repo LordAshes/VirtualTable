@@ -38,7 +38,17 @@ class TokensController < ApplicationController
 	@token = @game.tokens.find(params[:id])
     @token.update(token_params)
 	if(params.key?"record")
-	  @game.transactions.create(JSON.parse("{\"content\": \""+params[:player]+" moved "+getVisibleName(@token.title)+" to "+@token.x.to_s+","+@token.y.to_s+","+@token.z.to_s+"\"}"))
+	  if(token_params.key?"x")
+	    @game.transactions.create(JSON.parse("{\"content\": \""+params[:player]+" moved "+getVisibleName(@token.title)+" to "+@token.x.to_s+","+@token.y.to_s+","+@token.z.to_s+"\"}"))
+	  end
+	  if(token_params.key?"bright")
+	    @msg = params[:player]+" adjusted vision "
+		if(params.key?"source")
+		  @msg = @msg +", by "+params[:source]+", "
+		end
+		@msg = @msg + "to "+token_params[:bright].to_s+"/"+token_params[:dim].to_s+"/"+token_params[:eyes].to_s
+		@game.transactions.create(JSON.parse("{\"content\": \""+@msg+"\"}"))
+	  end
 	end
 	getTokens()
     render 'index'
@@ -308,7 +318,7 @@ class TokensController < ApplicationController
 
   private
     def token_params
-      params.require(:token).permit(:title, :x, :y, :z, :rotation, :state, :states, :location, :locked)
+      params.require(:token).permit(:title, :x, :y, :z, :rotation, :state, :states, :bright, :dim, :eyes, :location, :locked)
     end
 	
     def getTokens

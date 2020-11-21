@@ -35,6 +35,8 @@ class GamesController < ApplicationController
 	@data.split("\n").each do |line|
 	  if(line.downcase.include? "state")
 	    @game.tokens.create(JSON.parse(line))
+		@msg = JSON.parse(line).to_s.gsub! "\"", "'"
+		# @game.transactions.create(JSON.parse("{\"content\": \"Added "+@msg+"\"}"));
 	  end
 	end
 	# Displays all games
