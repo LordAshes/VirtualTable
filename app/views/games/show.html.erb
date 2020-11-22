@@ -40,6 +40,7 @@
 
   // Variable for holding update timer so it can be disabled on navigation away from the page
   var updateTimer = null;
+  var updateNameTimer = null;
     
   // Used to initialize the play area when the page is loaded  
   function initializeUpdates()
@@ -122,7 +123,14 @@
 	  alert(e);
 	}
   }
-    
+  
+  // Function for reporting name changes to the server (and chat bar)
+  function updateName()
+  {
+	$.ajax({ url: "/games/"+game_id+"/transactions/new?transaction[content]=Player becomes '"+document.getElementById('player').value+"'&player="+document.getElementById('player').value+"&from="+from });
+  }
+  
+  // Function for determining which light sources the player can see and rendering the corresponding HTML5 Canvas darkness pattern 
   function renderDarkness()
   {
     var dark = document.getElementById("Darkness");
@@ -155,7 +163,7 @@
 <span Id=GameTitle><%= @game.title %></span>
 <span Id=GameModule>(<%= @game.module %>) &nbsp;&nbsp;&nbsp;</span>
 <span Class=GameBarMenuItem><input type=color id="playerColor" value="#00AA00"></span>
-<span Class=GameBarMenuItem><input type=text id="player" value="Bob" size=10></span>
+<span Class=GameBarMenuItem><input type=text id="player" value="Bob" size=10 onChange="updateName();"></span>
 <span Class=GameBarMenuItem><button onClick="destroyUpdates(); destroyChat(); document.location.href='/games/';">Main Menu</button></span>
 <button onClick="from='2020-01-01 12:00:00 UTC';">Refresh</button>
 <span Id=check Class=GameBarMenuItem></span>
