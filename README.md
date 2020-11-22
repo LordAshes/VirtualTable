@@ -16,6 +16,7 @@ As such to use this source code, first unzip the base files and then add in the 
 Revision Notes:
 ---------------
 
+* Added wounded and poisoned hero states to "DandD" module
 * Added token zoom functionality and lighting functionality
 * Initial Commit
 
