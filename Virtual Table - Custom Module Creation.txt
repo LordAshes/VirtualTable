@@ -138,11 +138,21 @@ While there may be exceptions, when using Darkness, a module is limited to a max
 
 It should be noted that the javascript variables to contain these settings are already initialized by Virtual Table and thus the javascript setting file should NOT proceed these settings with "var".
 
-3.0 Learning The Basics
+3.0 Supporting Images And Optional Zoom Image Files
+
+Each state for each token that is defined in the configuration files needs to have a corresponding PNG file. For example, if a 6 sided die token defines the states D6_1, D6_2, to D6_6 then there needs to be a PNG file with the same name for each of these states. Obviously if mutiple tokens use the same states (for example, two dice) then each state only needs to have one corresponding PNG file.
+
+Optionally, in addition to the PNG file, a second PNG files with the suffix ".Zoom.PNG" (e.g. "D6_1.PNG and D6_1.Zoom.PNG) can be provided. If it is provided then the system will automaticaly display this second image if the user mouses over the token while holding ALT. Typically this is used to provide a zoomed in view of the token but can be used in other ways (such as providing more details about a token). For example, a roleplaying hero token could provide a image with the most important character stats on the "zoom" version of the image. 
+
+4.0 Learning The Basics
 
 The provided modules with Virtual Table are there to be able to experience using Virtual Table but there are also a good source for custom module creation. Between all the modules they cover most of the actions that Virtual table supports and thus can be used to copy the action code to your own module (in case the action needs some additional parameters). They also introduce some common compound actions to generate common game effects like changing the state of a token while dropping it to either play it to the table or secretly pass it to another player. Lastly the introduce some interesting tricks like the daylight/moonlight token in the D and D module which allows the user to switch between day and night.
 
-4.0 Group Action Note
+5.0 Where To Put Module Files
+
+All module files including the "abc.Module.cfg" and "abc.Module.js" (where abc is the module name) and all supporitng image files are placed in the "Public" folder of the Virtual Table (Ruby On Rails) server. Once there the mdouesl should become auomatically available for selection on the Create New Session page.
+
+6.0 Group Action Note
 
 Single token actions are performed on a single token. Background actions typically don't involve specific tokens or are used to unlock a specific token. Group actions, on the other hand, are applied to multiple tokens.
 
@@ -150,7 +160,7 @@ Group actions are first processed through a client side processor to deterimine 
 
 This is typically what is wanted but there can be cases where such an action list is to include a general command which only needs to be executed once for the whole batch and not once for each selected token. Currently the only likely command to fit this category is the reorder command. When any actions change a token's z position, the reorder action should be executed afterwards. For a single token this is as simple as adding the action as a second action in the action string. For example, "front,reorder". Such a command would first place teh selected token at the front of all tokens and then reorder all the tokens. However, if the same action string was used for a group action then the reorder action would occur for every selected token. While this would slow because the reordring would need to be done multiple times. For this purpose the group actions support the "1x:" prefix. Any action in the group action string which is prefixed by "1x:" is performed only once instead of once per selected token. It should be noted that only a "1x:" prefix exits (i.e. there are no "2x:" or "3x" prefixes).
 
-5.0 Z-Order And The Reorder Action
+7.0 Z-Order And The Reorder Action
 
 Tokens on the Virtual Table maintain their order with respect to which token is on top of another. Selecting a token automatically brings it to the front on top of any other tokens. In is referred to as the Z order or, in HTML, the Z index. The system used to viosualize the tokens HTML/CSS uses arbitrary numbers to determine the z-order. As long as a object's z value is higher that another obejct's that object is on top. This can cause problems when trying to move an object to the top or bottom because the highest value is not immediately known. While HTML/CSS does provide ways to move a object to the front or back if you are trying to record the corresponding z value it is more difficult. As a result, Virtual Table implements the re-order action. This takes all the tokens, in z order, and shifts their z-values so that they are consecutive starting at 10. By doing this, setting the z value of a token to less than 10 will always cause the token to be last and setting the value to 999 (this assumes the module will not use more than 998 tokens) will always cause the token to be on top. Once such an operation is done, calling the reorder action will, once again, align the z-orders to start at 10 and continue consecutively so that future tokens being set to less than 10 or 999 will still have their intended result.
 
