@@ -17,7 +17,7 @@ Revision Notes:
 ---------------
 
 * Added wounded and poisoned hero states to "DandD" module
-* Added token zoom functionality and lighting functionality
+* Added token zoom functionality and lighting functionality (using HTML5 Canvas)
 * Initial Commit
 
 --------------------
