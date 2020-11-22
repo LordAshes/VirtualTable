@@ -1,0 +1,157 @@
+-----------------
+- Virtual Table -
+-----------------
+
+Each module defines the tokens and context menus that are available when a user creates a session using that module. A module defines the objects available in the game similar to reading a board games content section.
+
+Each module consists of two files which are placed into the Public folder of the Virtual Table's serve folders. When these two files are present the module will automatically shows up when a session is created.
+
+The file names of the two files start with the module name follows by ".Module.cfg" and ".Module.js". For example, "Monopoly.Module.cfg" and "Monopoly.Module.js".
+
+1.0 The Configuration File
+
+The configuration files (ending in ".Module.cfg") lists each of the tokens that are available in the game. Virtual Table currently does not support creating or deleting objects on the fly just like a real board game. All pieces existing at the start of the game and pieces which are no longer need are put off to the side.
+
+The contents of the configuration file is a definition of the token properties with one token definition per line.
+
+Each line is a JSON encoded string representing the token's properties. For example:
+
+{ "title": "Lighting", "x": "1045", "y": "3", "z": "12", "rotation": "0", "state": "Daylight", "states": "Daylight,Moonlight", "bright": 2050, "dim": 2100, "eyes": "global", "location": "Table", "locked": "Locked" }
+
+Properties can appear in any order but all properties should be present. While Virtual Table can work using defaults for some propeties it is generally a good idea to specify all the properties.
+
+Below is a list of the properties and what they mean:
+
+title: A human readable title by which the token can be identified. If a portion of the title is in brackets then only the portion before the brackets will be displayed in the chat. This allows a unique identification of a token without identifying it in the chat. For example, if a token's title was "Queen of Hearts" then every time that card was moved (regardless if it is face up or face down) the chat would indicte it as "Queen of Hearts". If on the other hand the title is Card (Queen of Hearts) then it will show up as Card in the chat while retaining its identity for any logic that may need it (e.g. if adding on game specific rules to Virtual Table).
+
+x: The horizontal position on the virtual table in pixels.
+
+y: The vertical position on the virtual table in pixels.
+
+z: The position of the token in relationship to other tokens. Higher z values are on top of tokens with lower z values.
+
+rotation: The clockwise rotation of the token in degrees.
+
+state: The name of the current token state. The token's image is derived from the state by appending it with extension ".png". For example, "Heads" for a two state coin would display the token using the image Heads.png
+
+states: A list of the possible states separated by a comma. If state and states are the same then the token only has one state. If a token has more than one state they are listed separated by a comma. For example, "Heads,Tails" for a two state coin or "D6_1,D6_2,D6_3,D6_4,D6_5,D6_6" for a six sided die. The states and names used are up to the module creator.
+
+bright: Used for modules that use the Darkness function. Determines how much distance of darkness the token fully reveals in all directions around it. Value is in pixels. When a token does not reveal darkness but the Darkness option will be used, it is recommend to put this value at a small distance just enough to reveal the token. Otherwise the token will be hidden by darkness and will not be visible at all.
+
+dim: Used for modules that use the Darkness function. Determines how much distance of darkness the token somewhat reveals in all directions around it. Value is in pixels. Should be equal to or larger than the bright value.
+
+eyes: Used for modules that use the Darkness function. Determines if the token's light settings affect all players (if set to "global") or only the owner of the token (if set to anything else). Use "global" if the darkness reveal is due to equipment like a lantern, fire or torch in which case it affects all players. Use some other keyword, such as "darkvision", if the darkness reveal is due to some personal benefit which only affects the token itself.
+
+location: Starting ownership. Normally tokens start with "Table" ownership which means no player owns it. This is typical because the module does not know what the names of the players will be in order to assign them to someone else. However, some games require various players to perform certain roles and then tokens could be assigned with those names with the understanding that one of the players will take on that name. If in dounbt, use "Table".
+
+locked: Indicates if the token starts unlocked or locked. Unlocked tokens can be manipulated (moved and acted upon by single token and group token actions). Typically anything that the players are expected to move or interact with such as pawns, coins, cards, dice and tokens should be unlocked. Locked tokens cannot be move, singel token selected or group selected. They can only be affected by background actions (typically unlock). Locked tokens are typically tokens the should not be moved such a game boards. This prevents them from accidentally being selected from out underneath any tokens on top.
+
+2.0 The Settings File
+  
+The settings files (ending in ".Module.js") is a javascript file which sets a number of different settings for the module including the context menus. The easiest way to creat eone of these files is to copy one of the sample modules and edit it. There are 4 parts to a settings file which should be set: contextMenuOptionsForToken, contextMenuOptionsForBackground, contextMenuOptionsForGroup and settings. In addition if the module uses the lighting feature with obstaces then the additional following parts should be set: obstacles
+
+The first three settings are for the three different context menus. They all use the same format although the group context menu can make use of more actions that the other two (see the actions at the end of the User Manual for more details).
+
+These context menus are defined using a javascript object which have one or more key/value pairs. They key indicated the title that will show up in the context menu while the value is the action to be taked (see the actions at the end of the User Manual for possible actions). Keys must be unique. Keys which start with a dash (minus sign) are instead treated as dividers in the menu. Since keys need to be unique the dash (minus sign) can be followed by addition content, typically a number, to make them unique. It is good practice to add a "Cancel" key which has a blank action. This allows the menu to be closed without taking any action.
+
+Below is an example of a context menu configuration:
+
+contextMenuOptionsForToken =
+{
+  "Roll": "roll",
+  "-1": "",
+  "Take": "take",
+  "Drop": "drop",
+  "-2": "",
+  "Rotate (45CW)": "rotate&rotate=45",
+  "Rotate (45CCW)": "rotate&rotate=-45",
+  "Rotate (90CW)": "rotate&rotate=90",
+  "Rotate (90CCW)": "rotate&rotate=-90",
+  "-3": "",
+  "Torch": "edit&token[bright]=60&token[dim]=120&token[eyes]=global&source=Torch",
+  "Lantern": "edit&token[bright]=120&token[dim]=240&token[eyes]=global&source=Lantern",
+  "Darkvison": "edit&token[bright]=120&token[dim]=240&token[eyes]=darkvision&source=Darkvision",
+  "Regular": "edit&token[bright]=20&token[dim]=25&token[eyes]=regular&source=None",
+  "-4": "",
+  "Lock": "lock",
+  "-5": "",
+  "Cancel": "",
+};
+
+As can be seen, some actions do need any additional parameters (such as roo, take, drop and lock above) but other actions (such as edit and rotate) require the addition of additional parameters. To fully understand the possibilities of each action and what parameters are required or possible requires looking at the server code and is beyond the scope of this document. The most common uses of the available actions are provided in the sample modules that come with Virtual Table and can be copied from these configuration files to your own module configuration files to recreate the same effect.
+
+It should be noted that context menus are not token specific and thus the actions for all types of tokens use in the module need to be include. For example, a module that uses both cards and dice would likely have actions for fliping cards and rolling dice in the single token context menu. All of these actions would be displayed regardless if a card or die token was selected.
+
+It should also be noted that care should be taken to identify in which context menu to place actions. For example, if the module allows the lock and unlock command then the unlock command should not be put into the single token context menu because when a token is locked it will not geneate a single token context menu or be added to a group selection. As a result the unlock command must always be a background action. While background actions typically are action not associated with a token, they do support identification of locked tokens and thus can be used to send the unlock action. Similarly an actions specifically for groups (such as offset, stack, fan, shuffle, cut, etc) cannot be used in any context menu besides the group context menu.     
+
+The settings configuration is also a javascript object but with specific keys. A sample setting configuration looks like:
+
+settings =
+{
+  "Width": 1330,
+  "Height": 810,
+  "Color": "#AAAAAA",
+  "Chat": {"x": 1350, "y": 40},
+  "Darkness": true,
+  "DiagnosticMode": ""
+}
+  
+The Width setting indicates the horizontal size of the Virtual Table area in pixels.
+The Height setting indicates the vertical size of the Virtual Table area in pixels.
+The Color setting is a CSS color or color code indicating the color of the Virtual Table area background.
+The Chat setting is an object with an x and y key/alue pairs which indicate the position of the expanded chat bar.
+The Darkness setting indicates if the module uses the lighting functionality. If true the lighting functionality is used. If not lighting is not used.
+The DisgnosticMode is used to build obstacles. When empty and Darkness is true, it will render the view using the outlined lighting rules. If the DiagnosticMode is set to "light" then instead of showing the darkness and the revealed areas, the view will show all sources of light. Normally "light" mode is not useful to a module creator (it is used for troublshooting core lighting functionality). However, if the DiagnosticMode is set to "obstacles" then the view shows all of the defined obstacle area (if any). This is very useful when creating the obstacles boundaries. By switching this diagnostic mode on, the view will display all the obstacles areas over any othe tokens (such as backgrounds) so that the obstacles can be properly aligned with the background. To see this in action, edit the included DandD module and turn this disgnostic mode on (set it to "obstacles"). Join the session and see how the obstacles are rendered in blue on top of the background.
+
+Lastly, if the module uses Darkness, it can provide the definitions for obstacles. This is a javascript array of arrays of objects. Each obstacle area is an array of objects which have x and y key/value pairs indicating a point in the obstacle area outline. Each obstacle area can have 3 or more points. While 4 point rectangular areas are common, the system supports much more complex areas with many points. The last point will always be connected back to the first point to form a close area. The obstacles can support multiple areas, the obstacle definition is an array of these arrays. A sample obstacle definition looks like:
+
+obstacles = [
+                // Room 1
+				[	{"x": 58, "y": 82},
+					{"x": 439, "y": 82},
+					{"x": 439, "y": 369},
+					{"x": 463, "y": 369},
+					{"x": 463, "y": 510},
+					{"x": 439, "y": 510},
+					{"x": 439, "y": 629},
+					{"x": 249, "y": 629},
+					{"x": 249, "y": 349},
+					{"x": 58, "y": 349},
+				],
+				// Room 2
+				[
+					{"x": 439, "y": 82},
+					{"x": 512, "y": 82},
+					{"x": 512, "y": 229},
+					{"x": 439, "y": 229},
+				],
+				// Room 3
+				[
+					{"x": 249, "y": 629},
+					{"x": 439, "y": 629},
+					{"x": 439, "y": 747},
+					{"x": 249, "y": 747},
+				],
+			];
+
+While there may be exceptions, when using Darkness, a module is limited to a maximum of 255 tokens and a maximum of 255 obstacle definitions.  
+
+It should be noted that the javascript variables to contain these settings are already initialized by Virtual Table and thus the javascript setting file should NOT proceed these settings with "var".
+
+3.0 Learning The Basics
+
+The provided modules with Virtual Table are there to be able to experience using Virtual Table but there are also a good source for custom module creation. Between all the modules they cover most of the actions that Virtual table supports and thus can be used to copy the action code to your own module (in case the action needs some additional parameters). They also introduce some common compound actions to generate common game effects like changing the state of a token while dropping it to either play it to the table or secretly pass it to another player. Lastly the introduce some interesting tricks like the daylight/moonlight token in the D and D module which allows the user to switch between day and night.
+
+4.0 Group Action Note
+
+Single token actions are performed on a single token. Background actions typically don't involve specific tokens or are used to unlock a specific token. Group actions, on the other hand, are applied to multiple tokens.
+
+Group actions are first processed through a client side processor to deterimine if the parameters for all the tokens are the same (such as the stack action where all tokens go to the same location) or if the parameters for each selected token needs to be adjusted for each successive token (such as the fan or cascade action which has a different position for each select token). The client side processor the break us the request into individual requests for each token and sends them to the server. If the group action contains multiple actions, each action is applied to each selected token. 
+
+This is typically what is wanted but there can be cases where such an action list is to include a general command which only needs to be executed once for the whole batch and not once for each selected token. Currently the only likely command to fit this category is the reorder command. When any actions change a token's z position, the reorder action should be executed afterwards. For a single token this is as simple as adding the action as a second action in the action string. For example, "front,reorder". Such a command would first place teh selected token at the front of all tokens and then reorder all the tokens. However, if the same action string was used for a group action then the reorder action would occur for every selected token. While this would slow because the reordring would need to be done multiple times. For this purpose the group actions support the "1x:" prefix. Any action in the group action string which is prefixed by "1x:" is performed only once instead of once per selected token. It should be noted that only a "1x:" prefix exits (i.e. there are no "2x:" or "3x" prefixes).
+
+5.0 Z-Order And The Reorder Action
+
+Tokens on the Virtual Table maintain their order with respect to which token is on top of another. Selecting a token automatically brings it to the front on top of any other tokens. In is referred to as the Z order or, in HTML, the Z index. The system used to viosualize the tokens HTML/CSS uses arbitrary numbers to determine the z-order. As long as a object's z value is higher that another obejct's that object is on top. This can cause problems when trying to move an object to the top or bottom because the highest value is not immediately known. While HTML/CSS does provide ways to move a object to the front or back if you are trying to record the corresponding z value it is more difficult. As a result, Virtual Table implements the re-order action. This takes all the tokens, in z order, and shifts their z-values so that they are consecutive starting at 10. By doing this, setting the z value of a token to less than 10 will always cause the token to be last and setting the value to 999 (this assumes the module will not use more than 998 tokens) will always cause the token to be on top. Once such an operation is done, calling the reorder action will, once again, align the z-orders to start at 10 and continue consecutively so that future tokens being set to less than 10 or 999 will still have their intended result.
+
+This is basically a internal implementation which does not need to be fully understood in order to make custom modules. The only needed take away is that if you use any actions to change the z order (typically back or front but the edit action can also be used to change the z-order) the call a reorder action afterwards.  
