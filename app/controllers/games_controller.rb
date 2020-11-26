@@ -9,6 +9,7 @@ class GamesController < ApplicationController
 
   def show
     # Display a particular game.
+	@games = Game.all
     @game = Game.find(params[:id])
   end
 
