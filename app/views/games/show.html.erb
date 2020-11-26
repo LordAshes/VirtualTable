@@ -130,6 +130,22 @@
 	$.ajax({ url: "/games/"+game_id+"/transactions/new?transaction[content]=Player becomes '"+document.getElementById('player').value+"'&player="+document.getElementById('player').value+"&from="+from });
   }
   
+  // Function for sending a chat request to change session. Typically used for RPG modules to switch maps.
+  function changeSession(session)
+  {
+	// Turn off updates
+	destroyUpdates();
+	destroyChat();
+	// Send session change request via chat
+    $.ajax({ url: "/games/"+game_id+"/transactions/new?transaction[content]=<Session:"+session+"&player="+document.getElementById('player').value+"&from="+from });
+	// Wait for others to change session and then add a chat message to prevent future access to session from automatically changing
+	setTimeout(function()
+	{
+	  $.ajax({ url: "/games/"+game_id+"/transactions/new?transaction[content]=&nbsp;&player="+document.getElementById('player').value+"&from="+from });
+	  document.location.href = document.location.href.substring(0,document.location.href.lastIndexOf("/")+1)+parseInt(session);
+	},3000);
+  }
+  
   // Function for determining which light sources the player can see and rendering the corresponding HTML5 Canvas darkness pattern 
   function renderDarkness()
   {
@@ -167,6 +183,16 @@
 <span Class=GameBarMenuItem><button onClick="destroyUpdates(); destroyChat(); document.location.href='/games/';">Main Menu</button></span>
 <button onClick="from='2020-01-01 12:00:00 UTC';">Refresh</button>
 <span Id=check Class=GameBarMenuItem></span>
+&nbsp;&nbsp;Move To:
+<SELECT onChange="changeSession(document.getElementById('session').value);" id=session name=session>
+  <% @games.each do |session| %>
+    <% if(@game.id == session.id) %>
+      <OPTION value="<%= session.id %>" selected><%= session.title %></OPTION>
+	<% else %>
+	  <OPTION value="<%= session.id %>"><%= session.title %></OPTION>
+	<% end %>
+  <% end %>
+</SELECT>
 
 <!-- Create a table object that will hold the tokens and act as a object to click on for token movements !-->
 <DIV Id='Table_0' class='Table Locked' onClick='clickHandler("0","Table");' onMouseMove='dragUpdate();' style="Position: Absolute; Left: 10px; Top: 40px; z-Index: 1; oveflow: hidden;">
