@@ -16,6 +16,8 @@ As such to use this source code, first unzip the base files and then add in the 
 Revision Notes:
 ---------------
 
+* Added Session Change functionality allowing a player to move all connected players to a different session
+  (Typically used in RPG modules allowing the GM to split the different maps into individual modules and then move the players between them)
 * Added wounded and poisoned hero states to "DandD" module
 * Added token zoom functionality and lighting functionality (using HTML5 Canvas)
 * Initial Commit
