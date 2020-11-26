@@ -79,6 +79,12 @@
 	    chatList=msg+chatList;
 	  }
 	});
+	if(chatList.substring(0,18)=="&nbsp;&lt;Session:")
+	{
+		// Turn off updates
+		try { destroyUpdates(); destroyChat(); }catch(e){;}
+		document.location.href = document.location.href.substring(0,document.location.href.lastIndexOf("/")+1)+parseInt(chatList.substring(18));
+	}
     // Update chat contents
 	document.getElementById("Chat").innerHTML = chatList;
 	// fromChat = chatList.substring(chatList.indexOf("|")+1,chatList.indexOf("|")+24);
