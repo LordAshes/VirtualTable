@@ -63,7 +63,8 @@ settings =
   "Width": 1330,
   "Height": 800,
   "Color": "#AAAAAA",
-  "Chat": {"x": 1350, "y": 40},
+  "Chat": {"x": 1350, "y": 40, "visible": true},
+  "Zoom": {"x": 15, "y": 45},
   "Darkness": false,
   "DiagnosticMode": ""
 }
