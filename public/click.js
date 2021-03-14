@@ -27,6 +27,8 @@
 	zoom.style.position = "absolute";
 	zoom.style.pointerEvents = "none";
 	zoom.style.visibility = "hidden";
+	zoom.style.left = settings["Zoom"]["x"]+"px";
+	zoom.style.top = settings["Zoom"]["y"]+"px";
 	document.body.appendChild(zoom);
   }
   
@@ -255,7 +257,18 @@
 	  else
 	  {
 		// Single token action is usually used for re-order so pause a moment to allow outstanding actions to complete
-	    setTimeout("executeMenu('"+token_id+"','"+actions.substring(3)+"');",1000);
+		if(actions.substring(3).indexOf(",")<0)
+		{
+			setTimeout("executeMenu('"+token_id+"','"+actions.substring(3)+"');",1000);
+		}
+		else
+		{
+			var thisAction = actions.substring(3);
+			thisAction = thisAction.substring(0,thisAction.indexOf(","));
+			var remainingActions = actions.substring(3);
+			remainingActions = remainingActions.substring(remainingActions.indexOf(",")+1);
+			setTimeout("executeMenu('"+token_id+"','"+actions.substring(3)+"');executeGroupMenu('"+remainingActions+"',"+x+","+y+");",1000);
+		}
 	  }
 	}
 	else
@@ -304,12 +317,13 @@
 			{
 				var url = document.getElementById(el).src;
 				url = url.substring(0,url.lastIndexOf("."))+".zoom"+url.substring(url.lastIndexOf("."));
+				var base = url.substring(0,url.lastIndexOf("/"));
 				zoom.src = url;
-				zoom.style.left = e.clientX+"px";
-				zoom.style.top = e.clientY+"px";
+				// zoom.style.left = e.clientX+"px";
+			    // zoom.style.top = e.clientY+"px";
 				zoom.style.zIndex = 1000;
 				zoom.style.visibility="visible";
-				zoom.setAttribute("onError","document.getElementById('Zoom').src='/no.zoom.png';");
+				zoom.setAttribute("onError","document.getElementById('Zoom').src='"+base+"/no.zoom.png';");
 			}
 		}
 		else
@@ -387,4 +401,24 @@
 	  }
 	}
 	return false;
+  }
+  
+  // Function to deterct the browser size
+  function detectBrowserSize()
+  {
+    var myWidth = 0, myHeight = 0;
+    if (typeof (window.innerWidth) == 'number') {
+        //Non-IE
+        myWidth = window.innerWidth;
+        myHeight = window.innerHeight;
+    } else if (document.documentElement && (document.documentElement.clientWidth ||   document.documentElement.clientHeight)) {
+        //IE 6+ in 'standards compliant mode'
+        myWidth = document.documentElement.clientWidth;
+        myHeight = document.documentElement.clientHeight;
+    } else if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
+        //IE 4 compatible
+        myWidth = document.body.clientWidth;
+        myHeight = document.body.clientHeight;
+    }
+    return {"w": myWidth, "h": myHeight};
   }
