@@ -22,12 +22,14 @@
 	div.id = "Chat";
 	div.className = "ChatBar";
 	div.style="Position: Absolute; Left: "+settings["Chat"]["x"]+"px; Top: "+settings["Chat"]["y"]+"px;	Width: 500px; Height: 800px; Overflow: scroll; Border: 1px solid black;";
+	if(settings["Chat"]["visible"]==true){div.style.visibility = 'visible';}else{div.style.visibility = 'hidden';}
 	document.body.appendChild(div);
 	var in1 = document.createElement("input");
 	in1.id = "ChatBox";
 	in1.className = "ChatBar";
 	in1.type = "text";
 	in1.style="Position: Absolute; Left: "+(settings["Chat"]["x"]+20)+"px; Top: 850px; Width: 360px;";
+	if(settings["Chat"]["visible"]==true){in1.style.visibility = 'visible';}else{in1.style.visibility = 'hidden';}
 	document.body.appendChild(in1);
 	var in2 = document.createElement("input");
 	in2.id = "ChatBoxSubmit";
@@ -36,12 +38,14 @@
 	in2.value = "Send";
 	in2.style="Position: Absolute; Left: "+(settings["Chat"]["x"]+400)+"px; Top: 850px;";
 	in2.setAttribute("onClick","sendChat()");
+	if(settings["Chat"]["visible"]==true){in2.style.visibility = 'visible';}else{in2.style.visibility = 'hidden';}
 	document.body.appendChild(in2);
 	var btn = document.createElement("button");
 	btn.id = "ChatBoxResize";
 	btn.className = "ChatBar";
 	btn.style = "Position: Absolute; Left: "+(settings["Chat"]["x"]+460)+"px; Top: 850px; Width: 20px; Height:20px; background: url(/triangle_down.png)";
 	btn.setAttribute("onClick","resizeChat()");
+	if(settings["Chat"]["visible"]==true){btn.style.visibility = 'visible';}else{btn.style.visibility = 'hidden';}
 	document.body.appendChild(btn);	
 	
 	for (i = 0; i <100; i++)

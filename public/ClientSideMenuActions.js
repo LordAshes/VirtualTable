@@ -41,6 +41,7 @@ function applyClientSideMenuActionTransforms(action,value,specs)
   { 
     // If this is the first token, adjust the x starting value one horizontal interval back so that when one horizontal
 	// interval is added for each token (including the starting one) the first token will end up at the selected x value.
+	value = value.substring(value.indexOf("="));
     if(action==specs["action"]){ specs["x"]=specs["x"]-parseInt(value.substring(1));} 
 	// Call the RESTful "edit" operation.
 	specs["action"] = "edit";
